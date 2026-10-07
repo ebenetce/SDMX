@@ -168,7 +168,9 @@ jobs:
 
       - name: Set up Java for MATLAB
         run: |
-          /opt/matlab/R2024a/bin/glnxa64/matlab_jenv $JAVA_HOME
+          matlab_bin="$(readlink -f "$(command -v matlab)")"
+          matlab_root="$(dirname "$(dirname "$matlab_bin")")"
+          "$matlab_root/bin/glnxa64/matlab_jenv" "$JAVA_HOME"
 
       - name: Build and install toolbox
         uses: matlab-actions/run-command@v3
