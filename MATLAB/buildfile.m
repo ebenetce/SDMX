@@ -9,8 +9,13 @@ function plan = buildfile()
 
     plan = buildplan(localfunctions);
 
-    plan("check") = CodeIssuesTask();    % Task for identifying code issues
-    plan("test") = TestTask();           % Task for running tests
+    plan("check") = CodeIssuesTask('sdmx');    % Task for identifying code issues
+    plan("test") = TestTask('test', ...
+        TestResults= 'public/results.xml', ...
+        SourceFiles= 'sdmx', ...
+        CodeCoverageResults='public/coverage.xml');           % Task for running tests
+
+    plan("archive").Dependencies = ["check" "test"];
 
     plan.DefaultTasks = ["check" "test"];
 
@@ -20,7 +25,7 @@ function archiveTask(~, version)
 
     % update Contents.m
     f = fileread("Contents.inc");
-    f = regexprep(f, '<X.Y.Z>', sdmx_ver);
+    f = regexprep(f, '<X.Y.Z>', version);
     f = regexprep(f, '<dd-mm-yyyy>', string(datetime('today', Format = 'dd-MMM-yyyy')));
     writelines(f, fullfile("sdmx","Contents.m"),"WriteMode","overwrite")
 
