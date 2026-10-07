@@ -181,8 +181,8 @@ jobs:
         if: matrix.release == 'R2024a'
         uses: matlab-actions/run-tests@v3.3.0
         with:
-          source-folder: MATLAB/files
-          select-by-folder: MATLAB/files/test
+          source-folder: MATLAB/sdmx
+          select-by-folder: MATLAB/test
           test-results-junit: test-results/matlab-results.xml
           code-coverage-cobertura: test-results/coverage.xml
 
@@ -197,6 +197,8 @@ jobs:
             fprintf("SDMX VERSION = %s", sdmx_ver);
             buildtool archive(sdmx_ver);
             matlab.addons.install("MatSDMX.mltbx");
+            matlab.addons.installedAddons
+            which sdmxHelp()
             ver('sdmx')             
 
       - name: Upload MATLAB toolbox artifact

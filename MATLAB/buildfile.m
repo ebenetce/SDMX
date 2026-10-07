@@ -29,9 +29,11 @@ function archiveTask(~, version)
     f = regexprep(f, '<dd-mm-yyyy>', string(datetime('today', Format = 'dd-MMM-yyyy')));
     writelines(f, fullfile("sdmx","Contents.m"),"WriteMode","overwrite")
 
+    type('sdmx/Contents.m')
+
     opts = matlab.addons.toolbox.ToolboxOptions('sdmx', '50de8506-6d87-47ee-aa8a-2c7f2e56d761');
 
-    % Include everything inside ./files (recursively)
+    % Include everything inside ./sdmx (recursively)
     opts.ToolboxMatlabPath    = 'sdmx';
     opts.MinimumMatlabRelease = 'R2024a';
     opts.OutputFile           = 'MatSDMX.mltbx';
