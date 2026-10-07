@@ -5,9 +5,7 @@ function plan = buildfile()
     % Build the MatSDMX toolbox by including everything under ./sdmx
 
     sdmxPath = fullfile("files", "sdmx");
-    addpath(sdmxPath);
-    cobj = onCleanup(@() rmpath(sdmxPath));
-
+    
     plan = buildplan(localfunctions);
 
     plan("check") = CodeIssuesTask(sdmxPath);    % Task for identifying code issues
