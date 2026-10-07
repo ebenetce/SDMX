@@ -179,7 +179,7 @@ jobs:
         with:
           command: >
             tbx = fullfile("MATLAB", "MatSDMX.mltbx");
-            if isMATLABReleaseOlderThan('R2026b'), matlab.addons.install(tbx); else, mpminstall(tbx); end,            
+            if isMATLABReleaseOlderThan('R2026b'), matlab.addons.install(tbx); else, mpminstall(tbx, Prompt = false); end,            
             ver('sdmx').Version,
             assert(~isempty(getFlows('BIS_PUBLIC')))
 

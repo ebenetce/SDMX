@@ -8,7 +8,7 @@ function setupEnv()
 djp = javaclasspath("-dynamic");
 
 % Get location of JAR file
-sdmxRoot = fileparts(fileparts(mfilename('fullpath')));
+sdmxRoot = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 jarPath = fullfile(sdmxRoot, 'lib', 'SDMX.jar');
 
 if ~isfile(jarPath)
