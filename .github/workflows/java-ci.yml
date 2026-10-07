@@ -136,6 +136,9 @@ jobs:
   test-matlab:
     needs: build-java
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        release: [R2024a, R2026b]
 
     steps:
       - name: Checkout repository
@@ -154,6 +157,7 @@ jobs:
           echo "SDMX_VERSION=${{ needs.build-java.outputs.sdmx_version }}" >> "$GITHUB_ENV"
 
       - name: Set up JDK 11 for x64
+        if: matrix.release == 'R2026b'
         uses: actions/setup-java@v5.2.0
         with:
           java-version: '11'
@@ -163,16 +167,27 @@ jobs:
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v3.0.1
         with:
-          release: R2024a
+          release: ${{ matrix.release }}
           cache: true
 
       - name: Set up Java for MATLAB
+        if: matrix.release == 'R2026b'
         run: |
           matlab_bin="$(readlink -f "$(command -v matlab)")"
           matlab_root="$(dirname "$(dirname "$matlab_bin")")"
           "$matlab_root/bin/glnxa64/matlab_jenv" "$JAVA_HOME"
 
-      - name: Build and install toolbox
+      - name: Test with MATLAB R2024a
+        if: matrix.release == 'R2024a'
+        uses: matlab-actions/run-tests@v3.4.0
+        with:
+          source-folder: MATLAB/files
+          select-by-folder: MATLAB/files/test
+          test-results-junit: test-results/matlab-results.xml
+          code-coverage-cobertura: test-results/coverage.xml
+
+      - name: Archive and install toolbox with MATLAB R2026b
+        if: matrix.release == 'R2026b'
         uses: matlab-actions/run-command@v3
         with:
           command: >
@@ -180,18 +195,12 @@ jobs:
             cd("MATLAB");
             sdmx_ver = getenv("SDMX_VERSION");
             fprintf("SDMX VERSION = %s", sdmx_ver);
-            buildtool archive(sdmx_ver)
+            buildtool archive(sdmx_ver);
             matlab.addons.install("MatSDMX.mltbx");
-
-
-      - name: Run MATLAB tests
-        uses: matlab-actions/run-tests@v3
-        with:
-          source-folder: MATLAB/files
-          select-by-folder: MATLAB/files/test
-          test-results-junit: test-results/matlab-results.xml
+            ver('sdmx')             
 
       - name: Upload MATLAB toolbox artifact
+        if: matrix.release == 'R2026b'
         uses: actions/upload-artifact@v7.0.0
         with:
           name: matlab-toolbox

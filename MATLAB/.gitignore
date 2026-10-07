@@ -4,4 +4,4 @@ target
 resources/output
 
 sdmx/Contents.m
-public/
+test-results/
