@@ -168,7 +168,7 @@ jobs:
           matlab_root="$(dirname "$(dirname "$matlab_bin")")"
           "$matlab_root/bin/glnxa64/matlab_jenv" "$JAVA_HOME"
 
-      - name: Test Build and install toolbox
+      - name: Test, Build and install toolbox
         uses: matlab-actions/run-build@v3.4.0
         with:
           startup-options: -sd MATLAB
