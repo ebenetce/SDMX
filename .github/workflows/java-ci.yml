@@ -197,8 +197,8 @@ jobs:
             fprintf("SDMX VERSION = %s", sdmx_ver);
             buildtool archive(sdmx_ver);
             matlab.addons.install("MatSDMX.mltbx");
-            matlab.addons.installedAddons
-            which sdmxHelp()
+            matlab.addons.installedAddons,
+            which sdmxHelp,
             ver('sdmx')             
 
       - name: Upload MATLAB toolbox artifact
