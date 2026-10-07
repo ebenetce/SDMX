@@ -179,7 +179,7 @@ jobs:
 
       - name: Test with MATLAB R2024a
         if: matrix.release == 'R2024a'
-        uses: matlab-actions/run-tests@v3.4.0
+        uses: matlab-actions/run-tests@v3.3.0
         with:
           source-folder: MATLAB/files
           select-by-folder: MATLAB/files/test
