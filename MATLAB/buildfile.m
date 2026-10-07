@@ -4,15 +4,16 @@ function plan = buildfile()
     import matlab.buildtool.tasks.*
     % Build the MatSDMX toolbox by including everything under ./sdmx
 
-    addpath('sdmx');
-    cobj = onCleanup(@() rmpath('sdmx'));
+    sdmxPath = fullfile("files", "sdmx");
+    addpath(sdmxPath);
+    cobj = onCleanup(@() rmpath(sdmxPath));
 
     plan = buildplan(localfunctions);
 
-    plan("check") = CodeIssuesTask('sdmx');    % Task for identifying code issues
+    plan("check") = CodeIssuesTask(sdmxPath);    % Task for identifying code issues
     plan("test") = TestTask('test', ...
         TestResults= 'test-results/matlab-results.xml', ...
-        SourceFiles= 'sdmx', ...
+        SourceFiles= sdmxPath, ...
         CodeCoverageResults='test-results/coverage.xml');           % Task for running tests
 
     plan("archive").Dependencies = ["check" "test"];
@@ -27,14 +28,12 @@ function archiveTask(~, version)
     f = fileread("Contents.inc");
     f = regexprep(f, '<X.Y.Z>', version);
     f = regexprep(f, '<dd-mm-yyyy>', string(datetime('today', Format = 'dd-MMM-yyyy')));
-    writelines(f, fullfile("sdmx","Contents.m"),"WriteMode","overwrite")
+    writelines(f, fullfile("files", "sdmx", "Contents.m"),"WriteMode","overwrite")
 
-    type('sdmx/Contents.m')
-
-    opts = matlab.addons.toolbox.ToolboxOptions('sdmx', '50de8506-6d87-47ee-aa8a-2c7f2e56d761');
+    opts = matlab.addons.toolbox.ToolboxOptions('files', '50de8506-6d87-47ee-aa8a-2c7f2e56d761');
 
     % Include everything inside ./sdmx (recursively)
-    opts.ToolboxMatlabPath    = 'sdmx';
+    opts.ToolboxMatlabPath    = fullfile('files', 'sdmx');
     opts.MinimumMatlabRelease = 'R2024a';
     opts.OutputFile           = 'MatSDMX.mltbx';
     opts.ToolboxName          = 'MatSDMX';
