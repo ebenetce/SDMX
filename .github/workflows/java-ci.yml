@@ -166,15 +166,21 @@ jobs:
           release: R2024a
           cache: true
 
+      - name: Set up Java for MATLAB
+        run: |
+          /opt/matlab/R2024a/bin/glnxa64/matlab_jenv $JAVA_HOME
+
       - name: Build and install toolbox
         uses: matlab-actions/run-command@v3
         with:
           command: >
+            jenv,
             cd("MATLAB");
             sdmx_ver = getenv("SDMX_VERSION");
             fprintf("SDMX VERSION = %s", sdmx_ver);
-            build(sdmx_ver);
-            matlab.addons.toolbox.installToolbox("MatSDMX.mltbx");
+            buildtool archive(sdmx_ver)
+            matlab.addons.install("MatSDMX.mltbx");
+
 
       - name: Run MATLAB tests
         uses: matlab-actions/run-tests@v3

@@ -1,13 +1,33 @@
 % leave the function name as "build"
-function build(version)
-    % Build the MatSDMX toolbox by including everything under ./files
+function plan = buildfile()
 
-    opts = matlab.addons.toolbox.ToolboxOptions('files', '50de8506-6d87-47ee-aa8a-2c7f2e56d761');
+    import matlab.buildtool.tasks.*
+    % Build the MatSDMX toolbox by including everything under ./sdmx
+
+    addpath('sdmx');
+    cobj = onCleanup(@() rmpath('sdmx'));
+
+    plan = buildplan(localfunctions);
+
+    plan("check") = CodeIssuesTask();    % Task for identifying code issues
+    plan("test") = TestTask();           % Task for running tests
+
+    plan.DefaultTasks = ["check" "test"];
+
+end
+
+function archiveTask(~, version)
+
+    % update Contents.m
+    f = fileread("Contents.inc");
+    f = regexprep(f, '<X.Y.Z>', sdmx_ver);
+    f = regexprep(f, '<dd-mm-yyyy>', string(datetime('today', Format = 'dd-MMM-yyyy')));
+    writelines(f, fullfile("sdmx","Contents.m"),"WriteMode","overwrite")
+
+    opts = matlab.addons.toolbox.ToolboxOptions('sdmx', '50de8506-6d87-47ee-aa8a-2c7f2e56d761');
 
     % Include everything inside ./files (recursively)
-    opts.ToolboxFiles         = 'files';
-    opts.ToolboxMatlabPath    = 'files';
-    opts.ToolboxJavaPath      = string(fullfile("files", "lib", { dir("files/lib/*.jar").name }));
+    opts.ToolboxMatlabPath    = 'sdmx';
     opts.MinimumMatlabRelease = 'R2024a';
     opts.OutputFile           = 'MatSDMX.mltbx';
     opts.ToolboxName          = 'MatSDMX';
@@ -25,7 +45,7 @@ function build(version)
         "Project site:"
         ""
         "https://github.com/amattioc/SDMX"
-    ])
+    ]);
 
     matlab.addons.toolbox.packageToolbox(opts)
 end

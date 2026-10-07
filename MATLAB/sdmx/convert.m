@@ -130,6 +130,7 @@ function dates = convertDates(freq, dates, iso8601Date)
 		dates=regexprep(dates, 'S2', '12-31'); 
 		dates=(cell2mat(dates));
 	elseif(strcmp(freq, 'W'))
+        sdmx.setupEnv()
 		for i = 1 : length(dates)
 			dates{i} = char(it.bancaditalia.oss.sdmx.util.WeekConverter.convert(dates{i}));
 		end
