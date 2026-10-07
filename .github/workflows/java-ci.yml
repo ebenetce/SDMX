@@ -146,7 +146,7 @@ jobs:
       - name: Download SDMX JAR
         uses: actions/download-artifact@v8.0.1
         with:
-          name: sdmx-jar
+          name: SDMX.jar
           path: MATLAB/sdmx/lib
 
       - name: Apply VERSION
