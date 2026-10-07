@@ -176,7 +176,7 @@ jobs:
         uses: matlab-actions/run-build@v3.4.0
         with:
           startup-options: -sd MATLAB
-          tasks: archive('getenv("SDMX_VERSION")')
+          tasks: archive("${{ needs.build-java.outputs.sdmx_version }}")
 
       - name: Check Installation
         uses: matlab-actions/run-command@v3
