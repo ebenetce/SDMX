@@ -5,24 +5,35 @@ function plan = buildfile()
     % Build the MatSDMX toolbox by including everything under ./files/
 
     sdmxPath = fullfile("files", "sdmx");
-
-    if isMATLABReleaseOlderThan('R2026b')
-        addpath(sdmxPath);
-        cobj = onCleanup(@() rmpath(sdmxPath));
-    end    
     
-    plan = buildplan(localfunctions);
-
+    plan = buildplan(localfunctions);    
+   
     plan("check") = CodeIssuesTask(sdmxPath);    % Task for identifying code issues
+
     plan("test") = TestTask('./test', ...
         TestResults = 'test-results/matlab-results.xml', ...
         SourceFiles = sdmxPath, ...
         CodeCoverageResults='test-results/coverage.xml');           % Task for running tests
+    
+    plan("test").Actions = [@setup, plan("test").Actions, @cleanup];
 
     plan("archive").Dependencies = ["check" "test"];
 
     plan.DefaultTasks = ["check" "test"];
 
+end
+
+function setup(c)
+if isMATLABReleaseOlderThan('R2026b')
+    sdmxPath = fullfile("files", "sdmx");
+    addpath(sdmxPath);
+end
+end
+
+function cleanup(~)
+if isMATLABReleaseOlderThan('R2026b')
+    rmpath(sdmxPath);
+end
 end
 
 function archiveTask(~, version)
