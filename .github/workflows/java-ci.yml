@@ -136,6 +136,10 @@ jobs:
   test-matlab:
     needs: build-java
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [R2024a, R2026b]
 
     steps:
       - name: Checkout repository
@@ -159,7 +163,7 @@ jobs:
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v3.0.1
         with:
-          release: "R2026b"
+          release: ${{ matrix.release }}
           cache: true
 
       - name: Set up Java for MATLAB
@@ -168,7 +172,7 @@ jobs:
           matlab_root="$(dirname "$(dirname "$matlab_bin")")"
           "$matlab_root/bin/glnxa64/matlab_jenv" "$JAVA_HOME"
 
-      - name: Test, Build and install toolbox
+      - name: Test and build toolbox
         uses: matlab-actions/run-build@v3.4.0
         with:
           startup-options: -sd MATLAB
@@ -181,9 +185,11 @@ jobs:
             tbx = fullfile("MATLAB", "MatSDMX.mltbx");
             if isMATLABReleaseOlderThan('R2026b'), matlab.addons.install(tbx); else, mpminstall(tbx, Prompt = false); end,            
             ver('sdmx').Version,
-            assert(~isempty(getFlows('BIS_PUBLIC')))
+            which("sdmxHelp"),
+            runtests(fullfile("MATLAB", "test", "testSDMX.m"))
 
       - name: Upload MATLAB toolbox artifact
+        if: matrix.release == 'R2026b'
         uses: actions/upload-artifact@v7.0.0
         with:
           name: matlab-toolbox
