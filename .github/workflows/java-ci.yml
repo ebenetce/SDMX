@@ -155,7 +155,12 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           architecture: x64
-
+      - name: checkJava
+        run: |
+          ls
+          ls MATLAB
+          ls MATLAB/files/sdmx/lib
+          
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v3.0.1
         with:
