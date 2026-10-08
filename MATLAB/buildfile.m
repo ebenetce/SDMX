@@ -8,7 +8,7 @@ function plan = buildfile()
 
     if isMATLABReleaseOlderThan('R2026b')
         addpath(sdmxPath);
-        cobj = onCleanup(@() rmpath(sdmxPath);
+        cobj = onCleanup(@() rmpath(sdmxPath));
     end    
     
     plan = buildplan(localfunctions);
