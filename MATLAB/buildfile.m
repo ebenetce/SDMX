@@ -2,9 +2,14 @@
 function plan = buildfile()
 
     import matlab.buildtool.tasks.*
-    % Build the MatSDMX toolbox by including everything under ./sdmx
+    % Build the MatSDMX toolbox by including everything under ./files/
 
     sdmxPath = fullfile("files", "sdmx");
+
+    if isMATLABReleaseOlderThan('R2026b')
+        addpath(sdmxPath);
+        cobj = onCleanup(@() rmpath(sdmxPath);
+    end    
     
     plan = buildplan(localfunctions);
 
