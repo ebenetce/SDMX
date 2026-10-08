@@ -185,8 +185,8 @@ jobs:
             tbx = fullfile("MATLAB", "MatSDMX.mltbx");
             if isMATLABReleaseOlderThan('R2026b'), matlab.addons.install(tbx); else, mpminstall(tbx, Prompt = false); end,            
             ver('sdmx').Version,
-            which("sdmxHelp"),
-            runtests(fullfile("MATLAB", "test", "testSDMX.m"))
+            assert(contains(which("sdmxHelp"),'MATLAB Add-Ons')),
+            assert( ~isempty(getFlows('ECB')) )
 
       - name: Upload MATLAB toolbox artifact
         if: matrix.release == 'R2026b'
